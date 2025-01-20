@@ -35,7 +35,7 @@ exports.handler = async function(event, context) {
     console.log('İstek başlıyor - Prompt:', prompt);
     
     const requestBody = {
-      model: "mistralai/mistral-7b-instruct",
+      model: "openai/gpt-3.5-turbo",
       messages: [
         {
           role: "user",
@@ -53,9 +53,9 @@ exports.handler = async function(event, context) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer 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',
+        'Authorization': 'Bearer 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',
         'HTTP-Referer': 'https://apilonic.netlify.app',
-        'X-Title': 'ApiLonic'
+        'X-Title': 'Api Lonic'
       },
       body: JSON.stringify(requestBody)
     });
@@ -83,7 +83,7 @@ exports.handler = async function(event, context) {
       body: JSON.stringify({
         success: true,
         prompt: prompt,
-        model: "mistralai/mistral-7b-instruct",
+        model: "openai/gpt-3.5-turbo",
         language: "tr",
         response: data.choices[0].message.content
       })
