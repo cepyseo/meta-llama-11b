@@ -17,7 +17,8 @@ exports.handler = async function(event, context) {
     };
   }
 
-  const prompt = event.queryStringParameters.prompt;
+  const prompt = event.queryStringParameters?.prompt;
+  console.log('Gelen istek parametreleri:', event.queryStringParameters);
 
   if (!prompt) {
     return {
@@ -42,7 +43,8 @@ exports.handler = async function(event, context) {
         }
       ],
       temperature: 0.7,
-      max_tokens: 1000
+      max_tokens: 1000,
+      stream: false
     };
 
     console.log('Request body:', JSON.stringify(requestBody));
@@ -51,7 +53,7 @@ exports.handler = async function(event, context) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer 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',
+        'Authorization': 'Bearer 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',
         'HTTP-Referer': 'https://apilonic.netlify.app',
         'X-Title': 'ApiLonic'
       },
@@ -60,12 +62,19 @@ exports.handler = async function(event, context) {
 
     console.log('API Status:', response.status);
     console.log('API Status Text:', response.statusText);
+    console.log('Response Headers:', JSON.stringify(Object.fromEntries([...response.headers]), null, 2));
 
     const data = await response.json();
     console.log('API Response Data:', JSON.stringify(data, null, 2));
 
     if (!response.ok) {
+      console.error('API Error Response:', data);
       throw new Error(data.error?.message || JSON.stringify(data));
+    }
+
+    if (!data.choices?.[0]?.message?.content) {
+      console.error('Invalid API Response Format:', data);
+      throw new Error('API yanıtı geçersiz format');
     }
 
     return {
@@ -82,7 +91,9 @@ exports.handler = async function(event, context) {
   } catch (error) {
     console.error('Hata oluştu:', {
       message: error.message,
-      stack: error.stack
+      stack: error.stack,
+      name: error.name,
+      code: error.code
     });
 
     return {
@@ -90,7 +101,9 @@ exports.handler = async function(event, context) {
       headers,
       body: JSON.stringify({
         success: false,
-        error: error.message
+        error: error.message,
+        errorType: error.name,
+        errorCode: error.code
       })
     };
   }
