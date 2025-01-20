@@ -2,11 +2,12 @@ const { OpenAI } = require('openai');
 
 const client = new OpenAI({
   baseURL: "https://openrouter.ai/api/v1",
-  apiKey: "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",
   defaultHeaders: {
     "HTTP-Referer": "https://apilonic.netlify.app",
-    "X-Title": "ApiLonic"
-  }
+    "X-Title": "ApiLonic",
+    "Authorization": "Bearer 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"
+  },
+  apiKey: "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"
 });
 
 exports.handler = async function(event, context) {
@@ -62,6 +63,7 @@ exports.handler = async function(event, context) {
       })
     };
   } catch (error) {
+    console.error('API Error:', error);
     return {
       statusCode: 500,
       headers,
