@@ -50,7 +50,7 @@ exports.handler = async function(event, context) {
     console.log('İstek başlıyor - Prompt:', prompt);
     
     const requestBody = {
-      model: "google/gemma-2b-it:free",
+      model: "google/gemma-2-9b-it:free",
       messages: [
         {
           role: "user",
@@ -98,7 +98,7 @@ exports.handler = async function(event, context) {
       body: JSON.stringify({
         success: true,
         prompt: prompt,
-        model: "google/gemma-2b-it:free",
+        model: "google/gemma-2-9b-it:free",
         language: "tr",
         response: data.choices[0].message.content
       })
