@@ -1,14 +1,4 @@
-const { OpenAI } = require('openai');
-
-const client = new OpenAI({
-  baseURL: "https://openrouter.ai/api/v1",
-  defaultHeaders: {
-    "HTTP-Referer": "https://apilonic.netlify.app",
-    "X-Title": "ApiLonic",
-    "Authorization": "Bearer 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"
-  },
-  apiKey: "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"
-});
+const fetch = require('node-fetch');
 
 exports.handler = async function(event, context) {
   // CORS headers
@@ -41,15 +31,30 @@ exports.handler = async function(event, context) {
   }
 
   try {
-    const completion = await client.chat.completions.create({
-      model: "meta-llama/llama-3.2-11b-vision-instruct:free",
-      messages: [
-        {
-          role: "user",
-          content: prompt
-        }
-      ]
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer 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',
+        'HTTP-Referer': 'https://apilonic.netlify.app',
+        'X-Title': 'ApiLonic'
+      },
+      body: JSON.stringify({
+        model: "meta-llama/llama-3.2-11b-vision-instruct:free",
+        messages: [
+          {
+            role: "user",
+            content: prompt
+          }
+        ]
+      })
     });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'API isteği başarısız oldu');
+    }
 
     return {
       statusCode: 200,
@@ -59,7 +64,7 @@ exports.handler = async function(event, context) {
         prompt: prompt,
         model: "meta-llama/llama-3.2-11b-vision-instruct:free",
         language: "tr",
-        response: completion.choices[0].message.content
+        response: data.choices[0].message.content
       })
     };
   } catch (error) {
