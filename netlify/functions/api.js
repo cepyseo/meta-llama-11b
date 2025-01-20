@@ -31,6 +31,7 @@ exports.handler = async function(event, context) {
   }
 
   try {
+    console.log('API isteği gönderiliyor...');
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -40,7 +41,7 @@ exports.handler = async function(event, context) {
         'X-Title': 'ApiLonic'
       },
       body: JSON.stringify({
-        model: "meta-llama/llama-3.2-11b-vision-instruct:free",
+        model: "meta-llama/llama-2-70b-chat",
         messages: [
           {
             role: "user",
@@ -51,9 +52,16 @@ exports.handler = async function(event, context) {
     });
 
     const data = await response.json();
+    console.log('API yanıtı:', JSON.stringify(data));
 
     if (!response.ok) {
-      throw new Error(data.error || 'API isteği başarısız oldu');
+      console.error('API hata detayı:', JSON.stringify(data));
+      throw new Error(JSON.stringify(data.error || data));
+    }
+
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      console.error('Beklenmeyen API yanıtı:', JSON.stringify(data));
+      throw new Error('API yanıtı geçersiz format');
     }
 
     return {
@@ -62,19 +70,25 @@ exports.handler = async function(event, context) {
       body: JSON.stringify({
         success: true,
         prompt: prompt,
-        model: "meta-llama/llama-3.2-11b-vision-instruct:free",
+        model: "meta-llama/llama-2-70b-chat",
         language: "tr",
         response: data.choices[0].message.content
       })
     };
   } catch (error) {
-    console.error('API Error:', error);
+    console.error('Hata detayı:', {
+      message: error.message,
+      stack: error.stack,
+      error: error
+    });
+
     return {
       statusCode: 500,
       headers,
       body: JSON.stringify({
         success: false,
-        error: error.message
+        error: error.message,
+        details: JSON.stringify(error)
       })
     };
   }
