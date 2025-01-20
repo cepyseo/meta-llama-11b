@@ -32,22 +32,27 @@ exports.handler = async function(event, context) {
 
   try {
     console.log('API isteği gönderiliyor...');
+    
+    const apiKey = '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';
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer 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',
-        'HTTP-Referer': 'https://apilonic.netlify.app',
-        'X-Title': 'ApiLonic'
+        'Authorization': `Bearer ${apiKey}`,
+        'HTTP-Referer': 'https://apilonic.netlify.app/',
+        'X-Title': 'ApiLonic',
+        'OpenAI-Organization': 'org-apilonic'
       },
       body: JSON.stringify({
-        model: "meta-llama/llama-2-70b-chat",
+        model: "mistralai/mistral-7b-instruct",
         messages: [
           {
             role: "user",
             content: prompt
           }
-        ]
+        ],
+        temperature: 0.7,
+        max_tokens: 1000
       })
     });
 
@@ -70,7 +75,7 @@ exports.handler = async function(event, context) {
       body: JSON.stringify({
         success: true,
         prompt: prompt,
-        model: "meta-llama/llama-2-70b-chat",
+        model: "mistralai/mistral-7b-instruct",
         language: "tr",
         response: data.choices[0].message.content
       })
