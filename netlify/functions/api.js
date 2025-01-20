@@ -50,7 +50,7 @@ exports.handler = async function(event, context) {
     console.log('İstek başlıyor - Prompt:', prompt);
     
     const requestBody = {
-      model: "openai/gpt-3.5-turbo",
+      model: "google/gemma-2b-it:free",
       messages: [
         {
           role: "user",
@@ -58,7 +58,7 @@ exports.handler = async function(event, context) {
         }
       ],
       temperature: 0.7,
-      max_tokens: 1000,
+      max_tokens: 800,
       stream: false
     };
 
@@ -98,7 +98,7 @@ exports.handler = async function(event, context) {
       body: JSON.stringify({
         success: true,
         prompt: prompt,
-        model: "openai/gpt-3.5-turbo",
+        model: "google/gemma-2b-it:free",
         language: "tr",
         response: data.choices[0].message.content
       })
