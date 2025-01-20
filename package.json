@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "ApiLonic OpenRouter API Integration",
   "dependencies": {
-    "openai": "^4.0.0",
-    "node-fetch": "^2.6.1"
+    "node-fetch": "^2.6.1",
+    "dotenv": "^16.0.3"
   }
 } 

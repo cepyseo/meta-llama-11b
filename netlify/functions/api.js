@@ -1,4 +1,5 @@
 const fetch = require('node-fetch');
+require('dotenv').config();
 
 exports.handler = async function(event, context) {
   // CORS headers
@@ -14,6 +15,20 @@ exports.handler = async function(event, context) {
       statusCode: 200,
       headers,
       body: ''
+    };
+  }
+
+  // API anahtarını kontrol et
+  const apiKey = process.env.OPENROUTER_API_KEY;
+  if (!apiKey) {
+    console.error('API anahtarı bulunamadı!');
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({
+        success: false,
+        error: "API anahtarı yapılandırması eksik"
+      })
     };
   }
 
@@ -53,7 +68,7 @@ exports.handler = async function(event, context) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer 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',
+        'Authorization': `Bearer ${apiKey}`,
         'HTTP-Referer': 'https://apilonic.netlify.app',
         'X-Title': 'Api Lonic'
       },
